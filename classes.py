@@ -30,50 +30,51 @@ class Equations:
         tb = PrettyTable()
         tb.field_names = ["Method", "Answer", "Time"]
 
-        if self.method == 'all':
-            gauss_res, gauss_time = gauss(self.a, self.b)
-            tb.add_row(['Gauss', gauss_res, gauss_time], divider=True)
+        match self.method:
+            case 'all':
+                gauss_res, gauss_time = gauss(self.a, self.b)
+                tb.add_row(['Gauss', gauss_res, gauss_time], divider=True)
 
-            gauss_rec_res, gauss_rec_time = gauss_rectangle(self.a, self.b)
-            tb.add_row(['Gauss rectangle', gauss_rec_res, gauss_rec_time], divider=True)
+                gauss_rec_res, gauss_rec_time = gauss_rectangle(self.a, self.b)
+                tb.add_row(['Gauss rectangle', gauss_rec_res, gauss_rec_time], divider=True)
 
-            lu_res, lu_time = lu_solve(self.a, self.b)
-            tb.add_row(['LU', lu_res, lu_time], divider=True)
+                lu_res, lu_time = lu_solve(self.a, self.b)
+                tb.add_row(['LU', lu_res, lu_time], divider=True)
 
-            gs_res, gs_time = gauss_seidel(self.a, self.b, self.tol, self.max_iter)
-            tb.add_row(['Gauss Seidel', gs_res, gs_time], divider=True)
+                gs_res, gs_time = gauss_seidel(self.a, self.b, self.tol, self.max_iter)
+                tb.add_row(['Gauss Seidel', gs_res, gs_time], divider=True)
 
-            it_res, it_time = iteration(self.a, self.b, self.tol, self.max_iter)
-            tb.add_row(['Iteration', it_res, it_time], divider=True)
+                it_res, it_time = iteration(self.a, self.b, self.tol, self.max_iter)
+                tb.add_row(['Iteration', it_res, it_time], divider=True)
 
-        elif self.method == 'Gauss':
-            gauss_res, gauss_time = gauss(self.a, self.b)
-            tb.add_row(['Gauss', gauss_res, gauss_time], divider=True)
+            case 'Gauss':
+                gauss_res, gauss_time = gauss(self.a, self.b)
+                tb.add_row(['Gauss', gauss_res, gauss_time], divider=True)
 
-            self.x = gauss_res
+                self.x = gauss_res
 
-        elif self.method == 'Gauss rectangle':
-            gauss_rec_res, gauss_rec_time = gauss_rectangle(self.a, self.b)
-            tb.add_row(['Gauss rectangle', gauss_rec_res, gauss_rec_time], divider=True)
+            case 'Gauss rectangle':
+                gauss_rec_res, gauss_rec_time = gauss_rectangle(self.a, self.b)
+                tb.add_row(['Gauss rectangle', gauss_rec_res, gauss_rec_time], divider=True)
 
-            self.x = gauss_rec_res
+                self.x = gauss_rec_res
 
-        elif self.method == 'LU':
-            lu_res, lu_time = lu_solve(self.a, self.b)
-            tb.add_row(['LU', lu_res, lu_time], divider=True)
+            case 'LU':
+                lu_res, lu_time = lu_solve(self.a, self.b)
+                tb.add_row(['LU', lu_res, lu_time], divider=True)
 
-            self.x = lu_res
+                self.x = lu_res
 
-        elif self.method == 'Gauss Seidel':
-            gs_res, gs_time = gauss_seidel(self.a, self.b, self.tol, self.max_iter)
-            tb.add_row(['Gauss Seidel', gs_res, gs_time], divider=True)
+            case 'Gauss Seidel':
+                gs_res, gs_time = gauss_seidel(self.a, self.b, self.tol, self.max_iter)
+                tb.add_row(['Gauss Seidel', gs_res, gs_time], divider=True)
 
-            self.x = gs_res
+                self.x = gs_res
 
-        elif self.method == 'Iteration':
-            it_res, it_time = iteration(self.a, self.b, self.tol, self.max_iter)
-            tb.add_row(['Iteration', it_res, it_time], divider=True)
+            case 'Iteration':
+                it_res, it_time = iteration(self.a, self.b, self.tol, self.max_iter)
+                tb.add_row(['Iteration', it_res, it_time], divider=True)
 
-            self.x = it_res
+                self.x = it_res
 
         print(tb)
