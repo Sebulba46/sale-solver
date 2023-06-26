@@ -1,16 +1,35 @@
-# This is a sample Python script.
+from classes import Equations
+import numpy as np
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    a = [[16, 23, 12, 34, 2, 37, 109, 141, 139, 149, 29, 12, 131],
+         [13, 31, 5, 17, 29, 67, 16, 101, 7, 201, 32, 17, 171],
+         [81, 12, 5, 17, 9, 17, 39, 49, 67, 7, 41, 13, 121],
+         [91, 43, 17, 19, 17, 23, 97, 101, 101, 173, 12, 137, 217],
+         [71, 47, 37, 37, 41, 37, 67, 17, 2, 6, 41, 39, 12],
+         [61, 13, 101, 7, 117, 111, 4, 3, 19, 2, 13, 17, 91],
+         [51, 31, 37, 4, 101, 13, 7, 13, 41, 3, 31, 73, 71],
+         [21, 12, 67, 67, 9, 67, 9, 98, 101, 171, 13, 191, 54],
+         [41, 2, 5, 17, 18, 19, 20, 21, 22, 23, 11, 91, 2],
+         [31, 100, 2, 4, 5, 10, 10, 20, 50, 4, 10, 67, 4],
+         [17, 67, 2, 2, 8, 78, 9, 101, 107, 145, 21, 9, 10],
+         [11, 3, 4, 71, 45, 87, 8, 34, 45, 93, 104, 8, 20],
+         [19, 3, 9, 12, 123, 61, 71, 83, 91, 10, 11, 12, 82]]
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    b = [74608,
+         -4194,
+         -15793,
+         -16661,
+         -6862,
+         7802,
+         8846,
+         -4544,
+         -4050,
+         -4459,
+         37104,
+         4737,
+         623]
+
+    my_eq = Equations(a, b, method='Gauss')
+    my_eq.solve()
+    print(my_eq.x)
