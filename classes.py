@@ -1,6 +1,6 @@
 import numpy as np
 from prettytable import PrettyTable
-from sale import gauss, gauss_rectangle, lu_solve, gauss_seidel, iteration
+from sale import gauss, gauss_rectangle, lu_solve, gauss_seidel, iteration, dd, is_pos_def
 
 
 class Equations:
@@ -27,6 +27,7 @@ class Equations:
 
         :return: nothing
         """
+
         tb = PrettyTable()
         tb.field_names = ["Method", "Answer", "Time"]
 
@@ -42,10 +43,16 @@ class Equations:
                 tb.add_row(['LU', lu_res, lu_time], divider=True)
 
                 gs_res, gs_time = gauss_seidel(self.a, self.b, self.tol, self.max_iter)
-                tb.add_row(['Gauss Seidel', gs_res, gs_time], divider=True)
-
                 it_res, it_time = iteration(self.a, self.b, self.tol, self.max_iter)
-                tb.add_row(['Iteration', it_res, it_time], divider=True)
+
+                if dd(self.a) or is_pos_def(self.a):
+                    tb.add_row(['Gauss Seidel', gs_res, gs_time], divider=True)
+
+                    tb.add_row(['Iteration', it_res, it_time], divider=True)
+                else:
+                    tb.add_row(['Gauss Seidel', str(gs_res) + '\n' + 'may be no convergence', gs_time], divider=True)
+
+                    tb.add_row(['Iteration', str(it_res) + '\n' + 'may be no convergence', it_time], divider=True)
 
             case 'Gauss':
                 gauss_res, gauss_time = gauss(self.a, self.b)

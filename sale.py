@@ -3,6 +3,17 @@ import time
 from copy import deepcopy
 
 
+def dd(x):
+    D = np.diag(np.abs(x))
+    S = np.sum(np.abs(x), axis=1) - D
+
+    return np.all(D > S)
+
+
+def is_pos_def(x):
+    return np.all(np.linalg.eigvals(x) > 0)
+
+
 def gauss(a, b):
     start_time = time.time()
 
@@ -143,7 +154,7 @@ def gauss_seidel(a, b, tolerance, max_iterations):
         x_new = np.dot(np.dot(-L_lu_neg, U_lu), x) + np.dot(L_lu_neg, b)
         x_new = np.array(x_new).reshape(n,)
 
-        if np.allclose(x, x_new, rtol=tolerance):
+        if np.linalg.norm(x_new - x, ord=np.inf) <= tolerance:
             return x, str(round(time.time() - start_time, 5)) + 's'
 
         x = x_new
@@ -157,9 +168,8 @@ def iteration(a, b, tolerance, max_iterations):
     T = a - np.diag(np.diagonal(a))
 
     for k in range(max_iterations):
-        x_old = x.copy()
         x[:] = (b - np.dot(T, x)) / np.diagonal(a)
-        if np.linalg.norm(x - x_old, ord=np.inf) <= tolerance:
+        if np.linalg.norm(np.dot(a, x) - b, ord=np.inf) <= tolerance:
             break
 
     return x, str(round(time.time() - start_time, 5)) + 's'

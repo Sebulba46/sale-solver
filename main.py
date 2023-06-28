@@ -2,7 +2,7 @@ from classes import Equations
 import numpy as np
 
 if __name__ == '__main__':
-    a = [[16, 3],
+    a = [[16, 23],
          [7, -11]]
 
     b = [11,
