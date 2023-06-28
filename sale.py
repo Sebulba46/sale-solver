@@ -118,7 +118,7 @@ def lu_solve(a_lu, b_lu):
     return solve(U_lu, solve(L_lu, b_lu), rev=True), str(round(time.time() - start_time, 5)) + 's'
 
 
-def get_LU(lu):
+def gs_LU(lu):
     L = lu.copy()
     for i in range(L.shape[0]):
         L[i, i + 1:] = 0
