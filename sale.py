@@ -135,7 +135,7 @@ def gauss_seidel(a, b, tolerance, max_iterations):
 
     n = len(a)
 
-    L_lu, U_lu = get_LU(a)
+    L_lu, U_lu = gs_LU(a)
     L_lu_neg = np.linalg.matrix_power(L_lu, -1)
 
     for i in range(max_iterations):
