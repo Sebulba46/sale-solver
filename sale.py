@@ -1,43 +1,47 @@
 import numpy as np
 import time
+from copy import deepcopy
 
 
 def gauss(a, b):
     start_time = time.time()
 
-    n = len(a)
+    mat_a = deepcopy(a)
+    mat_b = deepcopy(b)
+
+    n = len(mat_a)
     x = np.zeros(n)  # матрица numpy для ответа
     k = 0
     for _ in range(n):
-        max_val = abs(a[k][k])  # поиск ведущего элемента в строках от k до n с максимальным значением и этого значения
+        max_val = abs(mat_a[k][k])  # поиск ведущего элемента в строках от k до n с максимальным значением и этого значения
         index = k
         for i in range(k + 1, n):  # выбор главного элемента по столбцу
-            if abs(a[i][k]) > max_val:
-                max_val = abs(a[i][k])
+            if abs(mat_a[i][k]) > max_val:
+                max_val = abs(mat_a[i][k])
                 index = i
         if max_val == 0:  # если максимальный элемент равен нулю, то решить методом гаусса не получится
             print(f"Решение получить невозможно из-за нулевого столбца {index} матрицы A")
             return 0
 
-        a[[k, index]] = a[[index, k]]  # перестановка строки с максимальным значением наверх
-        b[index], b[k] = b[k], b[index]  # перестановка y с максимальным значением наверх
+        mat_a[[k, index]] = mat_a[[index, k]]  # перестановка строки с максимальным значением наверх
+        mat_b[index], mat_b[k] = mat_b[k], mat_b[index]  # перестановка y с максимальным значением наверх
 
         for i in range(k, n):  # цикл деления и вычитания строк после найденного максимального значения
-            temp = a[i][k]  # макс значение
+            temp = mat_a[i][k]  # макс значение
             if abs(temp) == 0:  # если нулевой коэффициент, то пропускаем
                 continue
-            a[i] = a[i] / temp  # деление строки на max значение
-            b[i] = b[i] / temp  # деление y на max значение
+            mat_a[i] = mat_a[i] / temp  # деление строки на max значение
+            mat_b[i] = mat_b[i] / temp  # деление y на max значение
             if i == k:  # не вычитаем уравнение само из себя
                 continue
-            a[i] = a[i] - a[k]  # производим вычитание матриц numpy
-            b[i] = b[i] - b[k]
+            mat_a[i] = mat_a[i] - mat_a[k]  # производим вычитание матриц numpy
+            mat_b[i] = mat_b[i] - mat_b[k]
 
         k += 1
     for k in reversed(range(n)):  # обратный ход
-        x[k] = b[k]
+        x[k] = mat_b[k]
         for i in range(k):
-            b[i] = b[i] - a[i][k] * x[k]
+            mat_b[i] = mat_b[i] - mat_a[i][k] * x[k]
     return x, str(round(time.time() - start_time, 5)) + 's'
 
 
@@ -114,26 +118,40 @@ def lu_solve(a_lu, b_lu):
     return solve(U_lu, solve(L_lu, b_lu), rev=True), str(round(time.time() - start_time, 5)) + 's'
 
 
-def gauss_seidel(a, b, tolerance=0.0000001, max_iterations=10000):
+def get_LU(lu):
+    L = lu.copy()
+    for i in range(L.shape[0]):
+        L[i, i + 1:] = 0
+    U = lu.copy()
+    for i in range(0, U.shape[0]):
+        U[i, :i+1] = 0
+    return np.matrix(L), U
+
+
+def gauss_seidel(a, b, tolerance, max_iterations):
     start_time = time.time()
 
-    n = len(a)
     x = np.zeros_like(b, dtype=np.double)
 
+    n = len(a)
+
+    L_lu, U_lu = get_LU(a)
+    L_lu_neg = np.linalg.matrix_power(L_lu, -1)
+
     for i in range(max_iterations):
-        x_new = np.zeros(n)
-        for j in range(n):
-            s1 = np.dot(a[j, :j], x_new[:j])
-            s2 = np.dot(a[j, j + 1:], x[j + 1:])
-            x_new[j] = (b[j] - s1 - s2) / a[j, j]
+
+        x_new = np.dot(np.dot(-L_lu_neg, U_lu), x) + np.dot(L_lu_neg, b)
+        x_new = np.array(x_new).reshape(n,)
+
         if np.allclose(x, x_new, rtol=tolerance):
-            return x_new, str(round(time.time() - start_time, 5)) + 's'
+            return x, str(round(time.time() - start_time, 5)) + 's'
+
         x = x_new
 
     return x, str(round(time.time() - start_time, 5)) + 's'
 
 
-def iteration(a, b, tolerance=0.0000001, max_iterations=10000):
+def iteration(a, b, tolerance, max_iterations):
     start_time = time.time()
     x = np.zeros_like(b, dtype=np.double)
     T = a - np.diag(np.diagonal(a))
@@ -141,7 +159,7 @@ def iteration(a, b, tolerance=0.0000001, max_iterations=10000):
     for k in range(max_iterations):
         x_old = x.copy()
         x[:] = (b - np.dot(T, x)) / np.diagonal(a)
-        if np.linalg.norm(x - x_old, ord=np.inf) / np.linalg.norm(x, ord=np.inf) < tolerance:
+        if np.linalg.norm(x - x_old, ord=np.inf) <= tolerance:
             break
 
     return x, str(round(time.time() - start_time, 5)) + 's'
